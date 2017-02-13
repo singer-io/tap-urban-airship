@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "creation_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "modification_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "extra": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_modified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "channel_count": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "string"
+    }
+  }
+}
