@@ -1,1 +1,2 @@
 include LICENSE
+include tap_urban_airship/schemas/*.json
