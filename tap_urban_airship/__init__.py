@@ -9,17 +9,19 @@ from . import utils
 from .transform import transform_row
 
 
+BASE_URL = "https://go.urbanairship.com/api/"
 CONFIG = {
-    'base_url': "https://go.urbanairship.com/api/",
-    'default_start_date': utils.strftime(datetime.datetime.utcnow() - datetime.timedelta(days=365)),
-
-    # in config.json
     'app_key': None,
     'app_secret': None,
 }
 STATE = {}
 
 logger = singer.get_logger()
+
+
+def get_start(entity):
+    if entity not in STATE:
+        STATE[entity] = utils.strftime(datetime.datetime.utcnow() - datetime.timedelta(days=365))
 
 
 class APIException(Exception):
@@ -48,19 +50,19 @@ def sync_entity(entity, primary_keys, date_keys=None, transform=None):
     schema = utils.load_schema(entity)
     singer.write_schema(entity, schema, primary_keys)
 
-    start_date = STATE.get(entity, CONFIG['default_start_date'])
+    start_date = get_start(entity)
     for row in gen_request(entity):
         if transform:
             row = transform(row)
 
-        transformed = transform_row(row)
+        row = transform_row(row)
         if date_keys:
-            last_touched = max(transformed[date_key] for date_key in date_keys)
+            last_touched = max(row[date_key] for date_key in date_keys)
             utils.update_state(STATE, entity, last_touched)
             if last_touched < start_date:
                 continue
 
-        singer.write_record(entity, transformed)
+        singer.write_record(entity, row)
 
     singer.write_state(STATE)
 
@@ -90,9 +92,14 @@ def do_sync():
 
 def main():
     args = utils.parse_args()
-    CONFIG.update(utils.load_json(args.config))
+
+    config = utils.load_json(args.config)
+    utils.check_config(config, ["app_key", "app_secret"])
+    CONFIG.update()
+
     if args.state:
         STATE.update(utils.load_json(args.state))
+
     do_sync()
 
 
