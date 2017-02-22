@@ -13,15 +13,19 @@ BASE_URL = "https://go.urbanairship.com/api/"
 CONFIG = {
     'app_key': None,
     'app_secret': None,
+    'start_date': None,
 }
 STATE = {}
 
 logger = singer.get_logger()
+session = requests.Session()
 
 
 def get_start(entity):
     if entity not in STATE:
-        STATE[entity] = utils.strftime(datetime.datetime.utcnow() - datetime.timedelta(days=365))
+        STATE[entity] = CONFIG['start_date']
+
+    return STATE[entity]
 
 
 class APIException(Exception):
@@ -31,16 +35,14 @@ class APIException(Exception):
 
 def gen_request(endpoint):
     auth = (CONFIG['app_key'], CONFIG['app_secret'])
-    url = CONFIG['base_url'] + endpoint
+    headers = {'Accept': "Accept: application/vnd.urbanairship+json; version=3;"}
+    url = BASE_URL + endpoint
+    req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
     while url:
-        resp = requests.get(url, params=params, auth=auth)
+        resp = session.send(req)
         resp.raise_for_status()
-
         data = resp.json()
-        if not data['ok']:
-            raise APIException(data)
-
-        for row in data[entity]:
+        for row in data[endpoint]:
             yield row
 
         url = data.get('next_page')
@@ -94,7 +96,7 @@ def main():
     args = utils.parse_args()
 
     config = utils.load_json(args.config)
-    utils.check_config(config, ["app_key", "app_secret"])
+    utils.check_config(config, ["app_key", "app_secret", "start_date"])
     CONFIG.update()
 
     if args.state:
