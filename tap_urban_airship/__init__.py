@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import datetime
+import sys
 
 import requests
 import singer
@@ -34,13 +35,23 @@ class APIException(Exception):
 
 
 def gen_request(endpoint):
-    auth = (CONFIG['app_key'], CONFIG['app_secret'])
-    headers = {'Accept': "Accept: application/vnd.urbanairship+json; version=3;"}
+    auth = requests.auth.HTTPBasicAuth(CONFIG['app_key'], CONFIG['app_secret'])
+    headers = {'Accept': "application/vnd.urbanairship+json; version=3;"}
     url = BASE_URL + endpoint
-    req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
     while url:
+        req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
+        print(req.headers)
+        logger.info("GET {}".format(req.url))
         resp = session.send(req)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            try:
+                data = resp.json()
+                logger.error("GET {0} [{1.status_code} - {error} ({error_code})]".format(req.url, resp, **data))
+            except:
+                logger.error("GET {0} [{1.status_code} - {1.content}]".format(req.url, resp))
+
+            sys.exit(1)
+
         data = resp.json()
         for row in data[endpoint]:
             yield row
@@ -97,7 +108,7 @@ def main():
 
     config = utils.load_json(args.config)
     utils.check_config(config, ["app_key", "app_secret", "start_date"])
-    CONFIG.update()
+    CONFIG.update(config)
 
     if args.state:
         STATE.update(utils.load_json(args.state))
