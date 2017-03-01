@@ -40,7 +40,6 @@ def gen_request(endpoint):
     url = BASE_URL + endpoint
     while url:
         req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
-        print(req.headers)
         logger.info("GET {}".format(req.url))
         resp = session.send(req)
         if resp.status_code >= 400:
