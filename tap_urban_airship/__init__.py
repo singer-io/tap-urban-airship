@@ -37,6 +37,9 @@ class APIException(Exception):
 def gen_request(endpoint):
     auth = requests.auth.HTTPBasicAuth(CONFIG['app_key'], CONFIG['app_secret'])
     headers = {'Accept': "application/vnd.urbanairship+json; version=3;"}
+    if 'user_agent' in CONFIG:
+        headers['User-Agent'] = CONFIG['user_agent']
+
     url = BASE_URL + endpoint
     while url:
         req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
