@@ -3,6 +3,7 @@
 import datetime
 import sys
 
+import backoff
 import requests
 import singer
 
@@ -34,26 +35,36 @@ class APIException(Exception):
         super(Exception, self).__init__("API returned {error_code}: {error}\n\t{details}".format(**response))
 
 
-def gen_request(endpoint):
+@backoff.on_exception(backoff.expo,
+                      (requests.exceptions.RequestException),
+                      max_tries=5,
+                      giveup=lambda e: e.response is not None and 400 <= e.response.status_code < 500,
+                      factor=2)
+def request(url):
     auth = requests.auth.HTTPBasicAuth(CONFIG['app_key'], CONFIG['app_secret'])
     headers = {'Accept': "application/vnd.urbanairship+json; version=3;"}
     if 'user_agent' in CONFIG:
         headers['User-Agent'] = CONFIG['user_agent']
 
+    req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
+    logger.info("GET {}".format(req.url))
+    resp = session.send(req)
+    if resp.status_code >= 400:
+        try:
+            data = resp.json()
+            logger.error("GET {0} [{1.status_code} - {error} ({error_code})]".format(req.url, resp, **data))
+        except:
+            logger.error("GET {0} [{1.status_code} - {1.content}]".format(req.url, resp))
+
+        sys.exit(1)
+
+    return resp
+
+
+def gen_request(endpoint):
     url = BASE_URL + endpoint
     while url:
-        req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
-        logger.info("GET {}".format(req.url))
-        resp = session.send(req)
-        if resp.status_code >= 400:
-            try:
-                data = resp.json()
-                logger.error("GET {0} [{1.status_code} - {error} ({error_code})]".format(req.url, resp, **data))
-            except:
-                logger.error("GET {0} [{1.status_code} - {1.content}]".format(req.url, resp))
-
-            sys.exit(1)
-
+        resp = request(url)
         data = resp.json()
         for row in data[endpoint]:
             yield row
