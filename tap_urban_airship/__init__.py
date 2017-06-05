@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 import datetime
+import os
 import sys
 
 import backoff
 import requests
 import singer
+from singer import utils
 
-from . import utils
 from .transform import transform_row
 
 
@@ -21,6 +22,12 @@ STATE = {}
 
 logger = singer.get_logger()
 session = requests.Session()
+
+def get_abs_path(path):
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
+
+def load_schema(entity):
+    return utils.load_json(get_abs_path("schemas/{}.json".format(entity)))
 
 
 def get_start(entity):
@@ -73,7 +80,7 @@ def gen_request(endpoint):
 
 
 def sync_entity(entity, primary_keys, date_keys=None, transform=None):
-    schema = utils.load_schema(entity)
+    schema = load_schema(entity)
     singer.write_schema(entity, schema, primary_keys)
 
     start_date = get_start(entity)
@@ -117,14 +124,11 @@ def do_sync():
 
 
 def main():
-    args = utils.parse_args()
-
-    config = utils.load_json(args.config)
-    utils.check_config(config, ["app_key", "app_secret", "start_date"])
-    CONFIG.update(config)
+    args = utils.parse_args(["app_key", "app_secret", "start_date"])
+    CONFIG.update(args.config)
 
     if args.state:
-        STATE.update(utils.load_json(args.state))
+        STATE.update(args.state)
 
     do_sync()
 

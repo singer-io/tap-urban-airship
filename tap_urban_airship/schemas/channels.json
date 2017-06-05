@@ -42,7 +42,9 @@
     },
     "tags": {
       "type": "array",
-      "items": "string"
+      "items": {
+        "type": "string"
+      }
     },
     "tag_groups": {
       "type": "array",
