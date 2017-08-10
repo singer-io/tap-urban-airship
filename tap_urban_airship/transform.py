@@ -2,7 +2,7 @@ class InvalidData(Exception):
     """Raise when data doesn't validate the schema"""
 
 
-def transform_row(row, schem):
+def transform_row(row, schema):
     return _transform_field(row, schema)
 
 
