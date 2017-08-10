@@ -36,13 +36,6 @@ def get_start(entity):
 
     return STATE[entity]
 
-
-class APIException(Exception):
-    def __init__(self, response):
-        super(APIException, self).__init__(
-            "API returned {error_code}: {error}\n\t{details}".format(**response))
-
-
 @backoff.on_exception(backoff.expo,
                       (requests.exceptions.RequestException),
                       max_tries=5,
