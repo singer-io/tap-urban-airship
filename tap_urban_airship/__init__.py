@@ -20,8 +20,8 @@ CONFIG = {
 }
 STATE = {}
 
-logger = singer.get_logger()
-session = requests.Session()
+LOGGER = singer.get_logger()
+SESSION = requests.Session()
 
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
@@ -39,13 +39,15 @@ def get_start(entity):
 
 class APIException(Exception):
     def __init__(self, response):
-        super(Exception, self).__init__("API returned {error_code}: {error}\n\t{details}".format(**response))
+        super(APIException, self).__init__(
+            "API returned {error_code}: {error}\n\t{details}".format(**response))
 
 
 @backoff.on_exception(backoff.expo,
                       (requests.exceptions.RequestException),
                       max_tries=5,
-                      giveup=lambda e: e.response is not None and 400 <= e.response.status_code < 500,
+                      giveup=lambda e: e.response is not None \
+                          and 400 <= e.response.status_code < 500,
                       factor=2)
 def request(url):
     auth = requests.auth.HTTPBasicAuth(CONFIG['app_key'], CONFIG['app_secret'])
@@ -54,14 +56,15 @@ def request(url):
         headers['User-Agent'] = CONFIG['user_agent']
 
     req = requests.Request('GET', url, auth=auth, headers=headers).prepare()
-    logger.info("GET {}".format(req.url))
-    resp = session.send(req)
+    LOGGER.info("GET {}".format(req.url))
+    resp = SESSION.send(req)
     if resp.status_code >= 400:
         try:
             data = resp.json()
-            logger.error("GET {0} [{1.status_code} - {error} ({error_code})]".format(req.url, resp, **data))
-        except:
-            logger.error("GET {0} [{1.status_code} - {1.content}]".format(req.url, resp))
+            LOGGER.error("GET {0} [{1.status_code} - {error} ({error_code})]".format(
+                req.url, resp, **data))
+        except Exception:
+            LOGGER.error("GET {0} [{1.status_code} - {1.content}]".format(req.url, resp))
 
         sys.exit(1)
 
@@ -88,7 +91,7 @@ def sync_entity(entity, primary_keys, date_keys=None, transform=None):
         if transform:
             row = transform(row)
 
-        row = transform_row(row)
+        row = transform_row(row, schema)
         if date_keys:
             last_touched = max(row[date_key] for date_key in date_keys)
             utils.update_state(STATE, entity, last_touched)
@@ -101,7 +104,7 @@ def sync_entity(entity, primary_keys, date_keys=None, transform=None):
 
 
 def do_sync():
-    logger.info("Starting sync")
+    LOGGER.info("Starting sync")
 
     # Lists, Channels, and Segments are very straight forward to sync. They
     # each have two dates that need to be examined to determine the last time
@@ -120,7 +123,7 @@ def do_sync():
 
     sync_entity("named_users", ["named_user_id"], transform=flatten_channels)
 
-    logger.info("Sync completed")
+    LOGGER.info("Sync completed")
 
 
 def main():
