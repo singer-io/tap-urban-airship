@@ -40,7 +40,7 @@ def _type_transform(value, type_schema):
 
         raise InvalidData("{} doesn't match any of {}".format(value, type_schema))
 
-    if not value:
+    if value is None:
         if type_schema != "null":
             raise InvalidData("Null is not allowed")
         else:
