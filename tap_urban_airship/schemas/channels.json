@@ -2,10 +2,10 @@
   "type": "object",
   "properties": {
     "channel_id": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "device_type": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "installed": {
       "type": "boolean"
@@ -17,10 +17,10 @@
       "type": "boolean"
     },
     "push_address": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "created": {
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "last_registration": {
@@ -29,7 +29,7 @@
           "type": "null"
         },
         {
-          "type": "string",
+          "type": ["string", "null"],
           "format": "date-time"
         }
       ]
@@ -43,7 +43,7 @@
     "tags": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": ["string", "null"]
       }
     },
     "tag_groups": {
@@ -52,12 +52,12 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "tags": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": ["string", "null"]
             }
           }
         }
@@ -73,15 +73,15 @@
           "type": "object",
           "properties": {
             "start": {
-              "type": "string"
+              "type": ["string", "null"]
             },
             "end": {
-              "type": "string"
+              "type": ["string", "null"]
             }
           }
         },
         "tz": {
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }
