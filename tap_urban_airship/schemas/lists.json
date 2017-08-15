@@ -5,7 +5,7 @@
       "type": "string"
     },
     "description": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "extra": {
       "anyOf": [
@@ -21,7 +21,7 @@
                 "type": "string"
               },
               "value": {
-                "type": "string"
+                "type": ["string", "null"]
               }
             }
           }
@@ -29,18 +29,18 @@
       ]
     },
     "created": {
-      "type": "string",
+      "type": ["string", "null"]
       "format": "date-time"
     },
     "last_modified": {
-      "type": "string",
+      "type": ["string", "null"]
       "format": "date-time"
     },
     "channel_count": {
-      "type": "integer"
+      "type": ["integer", "null"]
     },
     "status": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   }
 }

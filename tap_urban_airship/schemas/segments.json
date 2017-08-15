@@ -5,14 +5,14 @@
       "type": "string"
     },
     "display_name": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "creation_date": {
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "modification_date": {
-      "type": "string",
+      "type": ["string", "null"],
       "format": "date-time"
     }
   }
