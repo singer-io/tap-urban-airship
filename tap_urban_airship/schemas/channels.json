@@ -2,19 +2,19 @@
   "type": "object",
   "properties": {
     "channel_id": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "device_type": {
       "type": ["string", "null"]
     },
     "installed": {
-      "type": "boolean"
+      "type": ["boolean", "null"]
     },
     "background": {
-      "type": "boolean"
+      "type": ["boolean", "null"]
     },
     "opt_in": {
-      "type": "boolean"
+      "type": ["boolean", "null"]
     },
     "push_address": {
       "type": ["string", "null"]
@@ -67,7 +67,7 @@
       "type": "object",
       "properties": {
         "badge": {
-          "type": "integer"
+          "type": ["integer", "null"]
         },
         "quiettime": {
           "type": "object",
