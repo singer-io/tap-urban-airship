@@ -29,11 +29,11 @@
       ]
     },
     "created": {
-      "type": ["string", "null"]
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "last_modified": {
-      "type": ["string", "null"]
+      "type": ["string", "null"],
       "format": "date-time"
     },
     "channel_count": {
