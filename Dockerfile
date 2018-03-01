@@ -8,6 +8,7 @@ ENV STITCH_TAP_PATH tap-env/bin/${STITCH_TAP_NAME}
 ARG STITCH_TAP_VERSION
 ARG TAP_URBAN_AIRSHIP_ENV=/root/venvs/tap-urban-airship
 
+# Copy the code for the tap into the image
 WORKDIR /code/tap-urban-airship
 COPY LICENSE setup.py ./
 COPY tap_urban_airship/*.py ./tap_urban_airship/
