@@ -47,18 +47,84 @@
       }
     },
     "tag_groups": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": ["string", "null"]
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": ["string", "null"]
-            }
+      "type": "object",
+      "properties": {
+        "timezone": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_opt_in": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_background_enabled": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_location_enabled": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_ios_app_version": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_android_app_version": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_locale_country": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_locale_language": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_ios_sdk_version": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_android_sdk_version": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_ios_version": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_android_version": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
+          }
+        },
+        "ua_ios_model": {
+          "type": "array",
+          "items": {
+            "type": ["string"]
           }
         }
       }
