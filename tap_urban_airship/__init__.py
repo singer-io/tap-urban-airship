@@ -84,7 +84,6 @@ def sync_entity(entity, primary_keys, date_keys=None, transform=None):
         if transform:
             row = transform(row)
 
-        row = transform_row(row, schema)
         if date_keys:
             # Rows can have various values for various date keys (See the calls to
             # `sync_entity` in `do_sync`), usually dates of creation and update.
@@ -104,6 +103,8 @@ def sync_entity(entity, primary_keys, date_keys=None, transform=None):
             utils.update_state(STATE, entity, last_touched)
             if last_touched < start_date:
                 continue
+
+        row = transform_row(row, schema)
 
         singer.write_record(entity, row)
 
@@ -128,7 +129,10 @@ def do_sync():
         item['channels'] = [c['channel_id'] for c in item['channels']]
         return item
 
-    sync_entity("named_users", ["named_user_id"], transform=flatten_channels)
+    # The date fields are not described in API documentation
+    # https://docs.urbanairship.com/api/ua/#schemas/nameduserresponsebody,
+    # but actually they are present.
+    sync_entity("named_users", ["named_user_id"], ["created", "last_modified"], transform=flatten_channels)
 
     LOGGER.info("Sync completed")
 
