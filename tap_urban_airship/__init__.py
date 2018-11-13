@@ -86,7 +86,21 @@ def sync_entity(entity, primary_keys, date_keys=None, transform=None):
 
         row = transform_row(row, schema)
         if date_keys:
-            last_touched = max(row[date_key] for date_key in date_keys)
+            # Rows can have various values for various date keys (See the calls to
+            # `sync_entity` in `do_sync`), usually dates of creation and update.
+            # But in some cases some keys may not be present.
+            #
+            # To handle this we:
+            #
+            # 1. Get _all_ the values for all the keys that are actually present in
+            # the row (not every row has every key), and exclude missing ones.
+            #
+            # 2. Take the max of those values as the bookmark for that entity.
+            #
+            # A KeyError is raised if the row has none of the date keys.
+            if not any(date_key in row for date_key in date_keys):
+                raise KeyError('None of date keys found in the row')
+            last_touched = max(row[date_key] for date_key in date_keys if date_key in row)
             utils.update_state(STATE, entity, last_touched)
             if last_touched < start_date:
                 continue
