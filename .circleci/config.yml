@@ -8,13 +8,13 @@ jobs:
       - run:
           name: 'Setup virtual env'
           command: |
-            uv venv --python 3.9 /usr/local/share/virtualenvs/tap-uservoice
-            source /usr/local/share/virtualenvs/tap-uservoice/bin/activate
+            uv venv --python 3.9 /usr/local/share/virtualenvs/tap-urban-airship
+            source /usr/local/share/virtualenvs/tap-urban-airship/bin/activate
             uv pip install .
       - run:
           name: 'pylint'
           command: |
-            source /usr/local/share/virtualenvs/tap-uservoice/bin/activate
+            source /usr/local/share/virtualenvs/tap-urban-airship/bin/activate
             uv pip install pylint
             pylint tap_urban_airship --disable missing-docstring,logging-format-interpolation,no-member,broad-except,redefined-variable-type,too-many-branches
 
