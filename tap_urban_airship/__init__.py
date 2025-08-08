@@ -69,8 +69,7 @@ def gen_request(endpoint):
     while url:
         resp = request(url)
         data = resp.json()
-        for row in data[endpoint]:
-            yield row
+        yield from data[endpoint]
 
         url = data.get('next_page')
 
