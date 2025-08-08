@@ -43,8 +43,7 @@ def _type_transform(value, type_schema):
     if value is None:
         if type_schema != "null":
             raise InvalidData("Null is not allowed")
-        else:
-            return None
+        return None
 
     if type_schema == "string":
         return str(value)
